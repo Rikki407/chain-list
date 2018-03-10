@@ -108,18 +108,19 @@ App = {
     },
 
     // listen to events triggered by the contract
-    listenToEvents: function() {
-        App.contracts.ChainList.deployed().then(function(instance) {
-            instance.LogSellArticle({}, {}).watch(function(error, event) {
-                if (!error) {
-                    $("#events").append('<li class="list-group-item">' + event.args._name + ' is now for sale</li>');
-                } else {
+   listenToEvents : function () {
+       App.contracts.ChainList.deployed().then(function (instance) {
+           instance.LogSellArticle({},{}).watch(function (error, event) {
+               if(!error){
+                   $("#events").append('<li class="list-group-item">' + event.args._name + ' is now for sale</li>');
+               }else {
                     console.error(error);
-                }
-                App.reloadArticles();
-            })
-        });
-    }
+               }
+               App.reloadArticles();
+
+           });
+       })
+   }
 };
 
 $(function() {
