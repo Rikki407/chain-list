@@ -41,7 +41,6 @@ App = {
         $.getJSON('ChainList.json', function (chainListArtifact) {
             App.contracts.ChainList = TruffleContract(chainListArtifact);
             App.contracts.ChainList.setProvider(App.web3Provider);
-            return App.reloadArticles();
         });
     },
 
@@ -51,7 +50,7 @@ App = {
         App.contracts.ChainList.deployed().then(function (instance) {
             return instance.getArticle();
         }).then(function (article) {
-            if(article[0]==0x0){
+            if(article[0]===0x0){
                 return;
             }
             var articleTemplate = $('#articleTemplate');
@@ -59,7 +58,7 @@ App = {
             articleTemplate.find('.article-description').text(article[2]);
             articleTemplate.find('.article-price').text(web3.fromWei(article[3],"ether"));
             var seller = article[0];
-            if(seller == App.account){
+            if(seller === App.account){
                 seller = "You"
             }
             articleTemplate.find('.article-seller').text(seller);
@@ -67,6 +66,26 @@ App = {
         }).catch(function (err) {
             console.log(err.message);
         });
+    },
+    sellArticle : function () {
+        //retrieve the details of the article
+        var _article_name = $('#article_name').val();
+        var _description = $('#article_description').val();
+        var _price = web3.toWei(parseFloat($('#article_price').val() || 0),"ether");
+        if((_article_name.trim()==='')||_price===0){
+            // nothing to sell
+            return false;
+        }
+        App.contracts.ChainList.deployed().then(function (instance) {
+            return instance.sellArticle(_article_name,_description,_price,{
+                from : App.account,
+                gas : 500000
+            })
+        }).then(function (result) {
+            App.reloadArticles();
+        }).catch(function (err) {
+            console.log(err);
+        })
     }
 };
 
