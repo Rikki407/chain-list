@@ -65,17 +65,35 @@ App = {
                 return;
             }
 
+            var price = web3.fromWei(article[4], "ether");
+
             // retrieve the article template and fill it
             var articleTemplate = $('#articleTemplate');
-            articleTemplate.find('.panel-title').text(article[1]);
-            articleTemplate.find('.article-description').text(article[2]);
-            articleTemplate.find('.article-price').text(web3.fromWei(article[3], "ether"));
+            articleTemplate.find('.panel-title').text(article[2]);
+            articleTemplate.find('.article-description').text(article[3]);
+            articleTemplate.find('.article-price').text(price);
+            articleTemplate.find('.btn-buy').attr('data-value', price);
 
             var seller = article[0];
             if (seller == App.account) {
                 seller = "You";
             }
             articleTemplate.find('.article-seller').text(seller);
+
+            // buyer
+            var buyer = article[1];
+            if(buyer == App.account){
+                buyer = "You";
+            } else if(buyer == 0X0) {
+                buyer = "No one yet";
+            }
+            articleTemplate.find('.article-buyer').text(buyer);
+
+            if(article[0] == App.account || article[1] != 0X0) {
+                articleTemplate.find('.btn-buy').hide();
+            } else {
+                articleTemplate.find('.btn-buy').show();
+            }
 
             // add this article
             $('#articlesRow').append(articleTemplate.html());
@@ -108,19 +126,44 @@ App = {
     },
 
     // listen to events triggered by the contract
-   listenToEvents : function () {
-       App.contracts.ChainList.deployed().then(function (instance) {
-           instance.LogSellArticle({},{}).watch(function (error, event) {
-               if(!error){
-                   $("#events").append('<li class="list-group-item">' + event.args._name + ' is now for sale</li>');
-               }else {
+    listenToEvents: function() {
+        App.contracts.ChainList.deployed().then(function(instance) {
+            instance.LogSellArticle({}, {}).watch(function(error, event) {
+                if (!error) {
+                    $("#events").append('<li class="list-group-item">' + event.args._name + ' is now for sale</li>');
+                } else {
                     console.error(error);
-               }
-               App.reloadArticles();
+                }
+                App.reloadArticles();
+            });
 
-           });
-       })
-   }
+            instance.LogBuyArticle({}, {}).watch(function(error, event) {
+                if (!error) {
+                    $("#events").append('<li class="list-group-item">' + event.args._buyer + ' bought ' + event.args._name + '</li>');
+                } else {
+                    console.error(error);
+                }
+                App.reloadArticles();
+            });
+        });
+    },
+
+    buyArticle: function() {
+        event.preventDefault();
+
+        // retrieve the article price
+        var _price = parseFloat($(event.target).data('value'));
+
+        App.contracts.ChainList.deployed().then(function(instance){
+            return instance.buyArticle({
+                from: App.account,
+                value: web3.toWei(_price, "ether"),
+                gas: 500000
+            });
+        }).catch(function(error) {
+            console.error(error);
+        });
+    }
 };
 
 $(function() {
