@@ -43,8 +43,8 @@
       <file leaf-file-name="ChainList.sol" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/contracts/ChainList.sol">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="346">
-              <caret line="50" column="26" lean-forward="false" selection-start-line="50" selection-start-column="26" selection-end-line="50" selection-end-column="26" />
+            <state relative-caret-position="645">
+              <caret line="72" column="19" lean-forward="false" selection-start-line="72" selection-start-column="19" selection-end-line="72" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -267,12 +267,12 @@
       <option name="presentableId" value="Default" />
       <updated>1520577511384</updated>
       <workItem from="1520577514267" duration="22793000" />
-      <workItem from="1520746786784" duration="2103000" />
+      <workItem from="1520746786784" duration="2829000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24896000" />
+    <option name="totallyTimeSpent" value="25622000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -577,8 +577,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/contracts/ChainList.sol">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="346">
-          <caret line="50" column="26" lean-forward="false" selection-start-line="50" selection-start-column="26" selection-end-line="50" selection-end-column="26" />
+        <state relative-caret-position="645">
+          <caret line="72" column="19" lean-forward="false" selection-start-line="72" selection-start-column="19" selection-end-line="72" selection-end-column="19" />
           <folding />
         </state>
       </provider>

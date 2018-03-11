@@ -51,6 +51,27 @@ contract ChainList {
     return articleCounter;
   }
 
+  //fetch and return all article IDs for articles still for sale
+  function getArticleForSale() public view returns(uint[]){
+    //prepare output array
+    uint[] memory articleIds = new uint[](articleCounter);
+    uint numberOfArticlesForSale = 0;
+    //iterate over articles
+    for(uint i=1;i<=articleCounter;i++) {
+      //keep the id if the article is still for sale
+      if(articles[i].buyer==0x0){
+        articleIds[numberOfArticlesForSale] = articles[i].id;
+        numberOfArticlesForSale++;
+      }
+    }
+
+    //copy the articleIds array into a smaller forSale array
+    uint[] memory forSale = new uint[](numberOfArticlesForSale);
+    for(uint j=0;j< numberOfArticlesForSale;j++){
+      forSale[j] = articleIds[j];
+    }
+    return forSale;
+  }
 
   // buy an article
   function buyArticle(uint _id) payable public {
