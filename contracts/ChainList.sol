@@ -43,7 +43,7 @@ contract ChainList {
       _description,
       _price
     );
-    LogSellArticle(articleCounter,seller, name, price);
+    LogSellArticle(articleCounter,msg.sender,_name,_price);
   }
 
   // fetch the number of articles in the contract
