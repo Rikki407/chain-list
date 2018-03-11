@@ -2,6 +2,7 @@ App = {
     web3Provider: null,
     contracts: {},
     account: 0x0,
+    loading: false,
 
     init: function() {
         return App.initWeb3();
@@ -51,54 +52,39 @@ App = {
     },
 
     reloadArticles: function() {
+        //avoid re entry
+        if(App.loading){
+            return;
+        }
+        App.loading = true;
+
         // refresh account information because the balance might have changed
         App.displayAccountInfo();
 
-        // retrieve the article placeholder and clear it
-        $('#articlesRow').empty();
+        var chainListInstance;
+
+
 
         App.contracts.ChainList.deployed().then(function(instance) {
-            return instance.getArticle();
-        }).then(function(article) {
-            if(article[0] == 0x0) {
-                // no article
-                return;
+            chainListInstance = instance;
+            return chainListInstance.getArticleForSale();
+        }).then(function(articleIds) {
+
+            // retrieve the article placeholder and clear it
+            $('#articlesRow').empty();
+            for(var i = 0;i < articleIds.length;i++){
+                var articleId = articleIds[i];
+                chainListInstance.articles(articleId.toNumber()).then(function (article) {
+                    App.displayArticle(article[0],article[1],article[3],article[4],article[5]);
+                });
             }
+            App.loading = false;
 
-            var price = web3.fromWei(article[4], "ether");
-
-            // retrieve the article template and fill it
-            var articleTemplate = $('#articleTemplate');
-            articleTemplate.find('.panel-title').text(article[2]);
-            articleTemplate.find('.article-description').text(article[3]);
-            articleTemplate.find('.article-price').text(price);
-            articleTemplate.find('.btn-buy').attr('data-value', price);
-
-            var seller = article[0];
-            if (seller == App.account) {
-                seller = "You";
-            }
-            articleTemplate.find('.article-seller').text(seller);
-
-            // buyer
-            var buyer = article[1];
-            if(buyer == App.account){
-                buyer = "You";
-            } else if(buyer == 0X0) {
-                buyer = "No one yet";
-            }
-            articleTemplate.find('.article-buyer').text(buyer);
-
-            if(article[0] == App.account || article[1] != 0X0) {
-                articleTemplate.find('.btn-buy').hide();
-            } else {
-                articleTemplate.find('.btn-buy').show();
-            }
 
             // add this article
             $('#articlesRow').append(articleTemplate.html());
         }).catch(function(err) {
-            console.error(err.message);
+            App.loading = false;
         });
     },
 
